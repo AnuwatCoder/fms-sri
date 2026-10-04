@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\PortalContent;
+use App\Models\AboutPage;
+use App\Models\AboutResponsibility;
+use App\Models\Personnel;
 use Illuminate\Contracts\View\View;
 
 class PortalPageController extends Controller
@@ -24,7 +26,11 @@ class PortalPageController extends Controller
 
     public function about(): View
     {
-        return view('portal.about', ['personnel' => PortalContent::personnel()]);
+        return view('portal.about', [
+            'aboutPage' => AboutPage::query()->firstOrFail(),
+            'responsibilities' => AboutResponsibility::published()->get(),
+            'personnel' => Personnel::published()->get(),
+        ]);
     }
 
     public function contact(): View

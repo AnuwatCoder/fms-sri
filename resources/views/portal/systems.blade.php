@@ -3,7 +3,7 @@
         <x-page-hero title="ระบบสารสนเทศ" eyebrow="INFORMATION SYSTEMS" description="ศูนย์รวมระบบและบริการดิจิทัลสำหรับสนับสนุนการปฏิบัติงานของหน่วยงาน" icon="bi-grid-fill" />
 
         <section class="subpage-content" aria-labelledby="systems-list-title">
-            <div class="container-xl">
+            <div class="container-fluid">
                 <livewire:application-directory />
             </div>
         </section>

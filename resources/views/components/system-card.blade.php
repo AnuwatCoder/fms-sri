@@ -3,7 +3,7 @@
 <article
     class="system-card system-card--{{ $application['color'] }} h-100"
     data-system-card
-    data-search="{{ Str::lower($application['name_th'].' '.$application['name_en'].' '.$application['description'].' '.$application['category']) }}"
+    data-search="{{ Str::lower($application['name_th'].' '.$application['name_en'].' '.$application['description'].' '.$application['category'].' '.$application->access_label) }}"
 >
     <div class="d-flex align-items-start gap-3">
         <div class="system-card__icon flex-shrink-0" aria-hidden="true">
@@ -25,8 +25,9 @@
             <p class="system-card__title-en mb-0">{{ $application['name_en'] }}</p>
         </div>
     </div>
+    <span class="system-card__access system-card__access--{{ $application->access_type }}"><i class="bi {{ $application->access_icon }}" aria-hidden="true"></i>{{ $application->access_label }}</span>
     <p class="system-card__description">{{ $application['description'] }}</p>
-    <a class="system-card__action" href="{{ $application['url'] }}" aria-label="เข้าใช้งาน {{ $application['name_th'] }}">
+    <a class="system-card__action" href="{{ $application['url'] ?: '#' }}" aria-label="เข้าใช้งาน {{ $application['name_th'] }}">
         เข้าใช้งาน <i class="bi bi-arrow-right" aria-hidden="true"></i>
     </a>
 </article>

@@ -46,6 +46,15 @@ test('the primary navigation links to real portal routes', function () {
         ->assertSee(route('contact'));
 });
 
+test('the administration entry is in the footer instead of the site header', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('เข้าสู่ระบบผู้ดูแล')
+        ->assertSee(route('admin.login'))
+        ->assertDontSee('bi-bell-fill', false)
+        ->assertDontSee('profile-menu', false);
+});
+
 test('the about page displays division personnel', function () {
     $this->get(route('about'))
         ->assertOk()

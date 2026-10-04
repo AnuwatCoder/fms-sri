@@ -3,7 +3,7 @@
         <x-page-hero title="ติดต่อเรา" eyebrow="CONTACT US" description="สอบถามข้อมูล ขอรับบริการ หรือแจ้งข้อเสนอแนะ ทีมงานพร้อมให้ความช่วยเหลือ" icon="bi-geo-alt-fill" />
 
         <section class="subpage-content" aria-labelledby="contact-title">
-            <div class="container-xl">
+            <div class="container-fluid">
                 <div class="row g-4">
                     <div class="col-lg-5">
                         <div class="contact-panel h-100">

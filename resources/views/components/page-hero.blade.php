@@ -1,7 +1,7 @@
 @props(['title', 'eyebrow', 'description', 'icon'])
 
 <section class="page-hero" aria-labelledby="page-title">
-    <div class="container-xl">
+    <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb page-hero__breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">หน้าหลัก</a></li>

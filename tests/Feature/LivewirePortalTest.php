@@ -4,7 +4,8 @@ use App\Livewire\ApplicationDirectory;
 use App\Livewire\ContactForm;
 use App\Livewire\DocumentDirectory;
 use App\Livewire\NewsDirectory;
-use App\Support\PortalContent;
+use App\Models\NewsItem;
+use App\Models\PortalDocument;
 use Livewire\Livewire;
 
 test('applications can be searched and filtered without reloading the page', function () {
@@ -29,21 +30,23 @@ test('application favorites are stored in the session', function () {
 });
 
 test('news can be filtered by category', function () {
-    $news = PortalContent::news();
+    $trainingNews = NewsItem::query()->where('category', 'อบรม')->firstOrFail();
+    $otherNews = NewsItem::query()->where('category', '!=', 'อบรม')->firstOrFail();
 
     Livewire::test(NewsDirectory::class)
         ->call('setCategory', 'อบรม')
-        ->assertSee($news[2]['title'])
-        ->assertDontSee($news[0]['title']);
+        ->assertSee($trainingNews->title)
+        ->assertDontSee($otherNews->title);
 });
 
 test('documents can be filtered by category', function () {
-    $documents = PortalContent::documents();
+    $form = PortalDocument::query()->where('category', 'แบบฟอร์ม')->firstOrFail();
+    $otherDocument = PortalDocument::query()->where('category', '!=', 'แบบฟอร์ม')->firstOrFail();
 
     Livewire::test(DocumentDirectory::class)
         ->call('setCategory', 'แบบฟอร์ม')
-        ->assertSee($documents[1]['name'])
-        ->assertDontSee($documents[0]['name']);
+        ->assertSee($form->name)
+        ->assertDontSee($otherDocument->name);
 });
 
 test('contact form validates and confirms a successful submission', function () {

@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Support\PortalContent;
+use App\Models\PortalSystem;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
@@ -24,7 +24,10 @@ class ApplicationDirectory extends Component
     public function mount(bool $compact = false): void
     {
         $this->compact = $compact;
-        $this->favorites = session()->get('portal_favorites', [0, 1, 5]);
+        $this->favorites = session()->get(
+            'portal_favorites',
+            PortalSystem::published()->where('is_featured', true)->pluck('id')->all(),
+        );
     }
 
     public function setCategory(string $category): void
@@ -34,16 +37,16 @@ class ApplicationDirectory extends Component
         }
     }
 
-    public function toggleFavorite(int $applicationKey): void
+    public function toggleFavorite(int $applicationId): void
     {
-        if (! array_key_exists($applicationKey, PortalContent::applications())) {
+        if (! PortalSystem::published()->whereKey($applicationId)->exists()) {
             return;
         }
 
-        if (in_array($applicationKey, $this->favorites, true)) {
-            $this->favorites = array_values(array_diff($this->favorites, [$applicationKey]));
+        if (in_array($applicationId, $this->favorites, true)) {
+            $this->favorites = array_values(array_diff($this->favorites, [$applicationId]));
         } else {
-            $this->favorites[] = $applicationKey;
+            $this->favorites[] = $applicationId;
             sort($this->favorites);
         }
 
@@ -52,31 +55,32 @@ class ApplicationDirectory extends Component
 
     public function render(): View
     {
-        $applications = collect(PortalContent::applications())
-            ->when($this->category !== 'all', fn ($items) => $items->where('group', $this->category))
+        $applications = PortalSystem::published()->get()
+            ->when($this->category !== 'all', fn ($items) => $items->where('group_key', $this->category))
             ->when($this->search !== '', function ($items) {
                 $query = Str::lower(trim($this->search));
 
-                return $items->filter(function (array $application) use ($query): bool {
+                return $items->filter(function (PortalSystem $application) use ($query): bool {
                     $searchable = Str::lower(implode(' ', [
-                        $application['name_th'],
-                        $application['name_en'],
-                        $application['description'],
-                        $application['category'],
+                        $application->name_th,
+                        $application->name_en,
+                        $application->description,
+                        $application->category,
+                        $application->access_label,
                     ]));
 
                     return Str::contains($searchable, $query);
                 });
             })
-            ->map(function (array $application, int $key): array {
-                $application['favorite'] = in_array($key, $this->favorites, true);
+            ->map(function (PortalSystem $application): PortalSystem {
+                $application->setAttribute('favorite', in_array($application->id, $this->favorites, true));
 
                 return $application;
             });
 
         return view('livewire.application-directory', [
             'applications' => $applications,
-            'totalApplications' => count(PortalContent::applications()),
+            'totalApplications' => PortalSystem::published()->count(),
         ]);
     }
 }

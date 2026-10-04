@@ -1,6 +1,6 @@
 <header class="site-header sticky-top">
     <nav class="navbar navbar-expand-xl bg-white" aria-label="เมนูหลัก">
-        <div class="container-xl">
+        <div class="container-fluid">
             <a class="navbar-brand brand-lockup" href="{{ route('home') }}" aria-label="หน้าหลัก คณะวิทยาการจัดการ" wire:navigate>
                 <span class="brand-mark" aria-hidden="true">PSU</span>
                 <span class="brand-divider" aria-hidden="true"></span>
@@ -9,19 +9,6 @@
 
             <div class="navbar-actions d-flex align-items-center gap-1 order-xl-3">
                 <button class="header-icon d-none d-sm-inline-flex" type="button" aria-label="ค้นหา" data-focus-search data-search-url="{{ route('systems.index') }}"><i class="bi bi-search" aria-hidden="true"></i></button>
-                <button class="header-icon position-relative d-none d-sm-inline-flex" type="button" aria-label="การแจ้งเตือน 3 รายการ">
-                    <i class="bi bi-bell-fill" aria-hidden="true"></i><span class="notification-badge">3</span>
-                </button>
-                <div class="dropdown d-none d-md-block">
-                    <button class="profile-menu dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="avatar avatar--small" aria-hidden="true">AP</span>
-                        <span class="profile-menu__copy"><strong>{{ auth()->user()?->name ?? 'Anuwat' }}</strong><small>บุคลากร</small></span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                        <li><a class="dropdown-item" href="{{ route('home') }}#profile"><i class="bi bi-person me-2"></i>ข้อมูลผู้ใช้</a></li>
-                        <li><a class="dropdown-item" href="{{ route('systems.index') }}"><i class="bi bi-star me-2"></i>รายการโปรด</a></li>
-                    </ul>
-                </div>
                 <button class="navbar-toggler ms-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavigation" aria-controls="mobileNavigation" aria-label="เปิดเมนู"><span class="navbar-toggler-icon"></span></button>
             </div>
 

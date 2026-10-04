@@ -1,7 +1,7 @@
 <x-portal-layout title="หน้าหลัก">
     <main id="main-content">
         <section class="hero" id="about" aria-labelledby="hero-title">
-            <div class="container-xl position-relative hero__content">
+            <div class="container-fluid position-relative hero__content">
                 <div class="row align-items-center g-5">
                     <div class="col-lg-8">
                         <p class="hero__eyebrow">STRATEGIC WORK, REVENUE MANAGEMENT AND INFORMATION INNOVATION DIVISION</p>
@@ -24,7 +24,7 @@
         </section>
 
         <section class="quick-nav bg-white" aria-label="เมนูทางลัด">
-            <div class="container-xl">
+            <div class="container-fluid">
                 <div class="row g-3 align-items-center">
                     <div class="col-xl-8">
                         <nav class="quick-links" aria-label="บริการที่ใช้บ่อย">
@@ -48,7 +48,7 @@
         </section>
 
         <div class="portal-content">
-            <div class="container-xl">
+            <div class="container-fluid">
                 <div class="row g-4 align-items-start">
                     <div class="col-lg-9">
                         <section class="content-section" id="systems" aria-labelledby="systems-title">
@@ -68,8 +68,8 @@
                                 @foreach ($newsItems as $news)
                                     <div class="col-md-4">
                                         <article class="news-card h-100">
-                                            <img src="{{ asset($news['image']) }}" alt="" loading="lazy">
-                                            <div class="news-card__body"><time>{{ $news['date'] }}</time><h3>{{ $news['title'] }}</h3><p>{{ $news['description'] }}</p><a href="{{ $news['url'] }}" aria-label="อ่านเพิ่มเติม: {{ $news['title'] }}">อ่านเพิ่มเติม <i class="bi bi-arrow-right"></i></a></div>
+                                            <img src="{{ $news->image_url }}" alt="" loading="lazy">
+                                            <div class="news-card__body"><time>{{ $news->display_date }}</time><h3>{{ $news->title }}</h3><p>{{ $news->description }}</p><a href="{{ $news->url ?: '#' }}" aria-label="อ่านเพิ่มเติม: {{ $news->title }}">อ่านเพิ่มเติม <i class="bi bi-arrow-right"></i></a></div>
                                         </article>
                                     </div>
                                 @endforeach
@@ -91,7 +91,7 @@
                             <div class="sidebar-heading"><h2 id="calendar-title"><i class="bi bi-calendar-event-fill"></i> ปฏิทินกิจกรรม</h2><a href="{{ route('news.index') }}">ดูทั้งหมด <i class="bi bi-arrow-right"></i></a></div>
                             <div class="event-list" id="calendar">
                                 @foreach ($events as $event)
-                                    <article class="event-item event-item--{{ $event['color'] }}"><time datetime="{{ $event['date'] }}"><strong>{{ $event['day'] }}</strong><span>{{ $event['month'] }}</span></time><div><h3>{{ $event['title'] }}</h3><p>{{ $event['time'] }} <span>•</span> {{ $event['place'] }}</p></div></article>
+                                    <article class="event-item event-item--{{ $event->color }}"><time datetime="{{ $event->starts_at->toDateString() }}"><strong>{{ $event->display_day }}</strong><span>{{ $event->display_month }}</span></time><div><h3>{{ $event->title }}</h3><p>{{ $event->display_time }} <span>•</span> {{ $event->place }}</p></div></article>
                                 @endforeach
                             </div>
                         </section>
@@ -100,7 +100,7 @@
                             <div class="sidebar-heading"><h2 id="documents-title"><i class="bi bi-folder-fill"></i> เอกสาร/ดาวน์โหลด</h2><a href="{{ route('documents.index') }}">ดูทั้งหมด <i class="bi bi-arrow-right"></i></a></div>
                             <div class="document-list">
                                 @foreach ($documents as $document)
-                                    <a href="{{ $document['url'] }}" class="document-item"><i class="bi {{ $document['icon'] }} text-{{ $document['color'] }}" aria-hidden="true"></i><span>{{ $document['name'] }} <small>({{ $document['type'] }})</small></span></a>
+                                    <a href="{{ $document->download_url }}" class="document-item"><i class="bi {{ $document->icon }} text-{{ $document->color }}" aria-hidden="true"></i><span>{{ $document->name }} <small>({{ $document->file_type }})</small></span></a>
                                 @endforeach
                             </div>
                         </section>

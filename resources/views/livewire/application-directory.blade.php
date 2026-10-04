@@ -28,9 +28,9 @@
         <div class="livewire-loading" wire:loading.delay aria-live="polite"><span class="spinner-border spinner-border-sm" aria-hidden="true"></span> กำลังอัปเดต...</div>
         @if ($applications->isNotEmpty())
             <div class="row g-{{ $compact ? '3' : '4' }}">
-                @foreach ($applications as $key => $application)
-                    <div class="{{ $compact ? 'col-md-6 col-xl-3' : 'col-md-6 col-lg-4 col-xl-3' }}" wire:key="application-{{ $key }}">
-                        <x-system-card :application="$application" :favorite-key="$key" />
+                @foreach ($applications as $application)
+                    <div class="{{ $compact ? 'col-md-6 col-xl-3' : 'col-md-6 col-lg-4 col-xl-3' }}" wire:key="application-{{ $application->id }}">
+                        <x-system-card :application="$application" :favorite-key="$application->id" />
                     </div>
                 @endforeach
             </div>

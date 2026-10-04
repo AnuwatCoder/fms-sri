@@ -2,8 +2,9 @@
 
 namespace App\Livewire;
 
-use App\Support\PortalContent;
+use App\Models\PortalDocument;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -14,16 +15,34 @@ class DocumentDirectory extends Component
 
     public function setCategory(string $category): void
     {
-        if (in_array($category, ['ทั้งหมด', 'คู่มือ', 'แบบฟอร์ม', 'แนวปฏิบัติ', 'นโยบาย'], true)) {
+        $categories = $this->categories()->prepend('ทั้งหมด')->all();
+
+        if (in_array($category, $categories, true)) {
             $this->category = $category;
         }
     }
 
     public function render(): View
     {
-        $documents = collect(PortalContent::documents())
-            ->when($this->category !== 'ทั้งหมด', fn ($items) => $items->where('category', $this->category));
+        $documents = PortalDocument::published()
+            ->when($this->category !== 'ทั้งหมด', fn ($query) => $query->where('category', $this->category))
+            ->get();
 
-        return view('livewire.document-directory', ['documents' => $documents]);
+        return view('livewire.document-directory', [
+            'documents' => $documents,
+            'categories' => $this->categories()->prepend('ทั้งหมด'),
+        ]);
+    }
+
+    /** @return Collection<int, string> */
+    private function categories(): Collection
+    {
+        return PortalDocument::published()
+            ->reorder()
+            ->whereNotNull('category')
+            ->select('category')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category');
     }
 }

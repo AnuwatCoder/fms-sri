@@ -80,3 +80,53 @@ document.addEventListener('click', (event) => {
 
     window.location.href = searchButton.dataset.searchUrl;
 });
+
+const initializeRichTextEditors = () => {
+    document.querySelectorAll('[data-rich-text]').forEach((container) => {
+        if (container.dataset.initialized === 'true') {
+            return;
+        }
+
+        const editor = container.querySelector('[data-rich-editor]');
+        const input = container.querySelector('[data-rich-input]');
+
+        if (! editor || ! input) {
+            return;
+        }
+
+        const syncInput = () => {
+            input.value = editor.innerHTML;
+        };
+
+        const updateToolbar = () => {
+            container.querySelectorAll('[data-rich-command]').forEach((button) => {
+                button.classList.toggle('is-active', document.queryCommandState(button.dataset.richCommand));
+            });
+        };
+
+        container.querySelectorAll('[data-rich-command]').forEach((button) => {
+            button.addEventListener('mousedown', (event) => event.preventDefault());
+            button.addEventListener('click', () => {
+                editor.focus();
+                document.execCommand(button.dataset.richCommand, false);
+                syncInput();
+                updateToolbar();
+            });
+        });
+
+        editor.addEventListener('input', syncInput);
+        editor.addEventListener('keyup', updateToolbar);
+        editor.addEventListener('mouseup', updateToolbar);
+        editor.addEventListener('paste', (event) => {
+            event.preventDefault();
+            document.execCommand('insertText', false, event.clipboardData.getData('text/plain'));
+        });
+        editor.closest('form')?.addEventListener('submit', syncInput);
+
+        container.dataset.initialized = 'true';
+        syncInput();
+    });
+};
+
+document.addEventListener('DOMContentLoaded', initializeRichTextEditors);
+document.addEventListener('livewire:navigated', initializeRichTextEditors);

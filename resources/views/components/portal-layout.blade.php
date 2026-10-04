@@ -10,8 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ $description }}">
     <title>{{ $title }} | FMS Portal</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=noto-sans-thai:400,500,600,700|prompt:500,600,700" rel="stylesheet">
     @vite(['resources/js/app.js'])
     @livewireStyles
 </head>
