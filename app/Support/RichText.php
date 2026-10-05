@@ -32,4 +32,20 @@ class RichText
 
         return trim(preg_replace('/\s+/u', ' ', $text) ?? '');
     }
+
+    /** @return array<int, string> */
+    public static function toListItems(?string $value): array
+    {
+        $html = self::sanitize($value);
+
+        if (! $html) {
+            return [];
+        }
+
+        return collect(preg_split('/<br\s*\/?>/i', $html) ?: [])
+            ->map(fn (string $item): string => trim($item))
+            ->filter()
+            ->values()
+            ->all();
+    }
 }

@@ -87,6 +87,7 @@ test('the login and all administration screens render successfully', function ()
         route('admin.documents.index') => 'เอกสารดาวน์โหลด',
         route('admin.documents.create') => 'เพิ่มเอกสาร',
         route('admin.documents.edit', $document) => 'แก้ไขเอกสาร',
+        route('admin.seo.edit') => 'ตั้งค่า SEO',
         route('admin.about.edit') => 'เกี่ยวกับหน่วยงาน',
         route('admin.about.responsibilities.index') => 'ภารกิจหลักของหน่วยงาน',
         route('admin.about.responsibilities.create') => 'เพิ่มภารกิจ',
@@ -137,7 +138,7 @@ test('an administrator can create update and delete a portal system', function (
     expect($system->fresh())
         ->name_th->toBe('ระบบทดสอบฉบับแก้ไข')
         ->access_type->toBe('vpn')
-        ->access_label->toBe('ภายใน VPN')
+        ->access_label->toBe('ภายใน (VPN)')
         ->is_featured->toBeTrue();
 
     $this->actingAs(adminUser())
@@ -178,6 +179,7 @@ test('an administrator can manage news events and uploaded documents', function 
     $this->actingAs($admin)->post(route('admin.documents.store'), [
         'name' => 'เอกสารทดสอบ',
         'category' => 'คู่มือ',
+        'version' => '2.1',
         'icon' => 'bi-file-earmark-pdf',
         'color' => 'red',
         'published_at' => now()->format('Y-m-d H:i:s'),
@@ -187,8 +189,55 @@ test('an administrator can manage news events and uploaded documents', function 
     ])->assertRedirect(route('admin.documents.index'));
 
     $document = PortalDocument::query()->where('name', 'เอกสารทดสอบ')->firstOrFail();
-    expect($document->file_type)->toBe('PDF');
+    expect($document->file_type)->toBe('PDF')
+        ->and($document->file_size)->toBe('100 KB')
+        ->and($document->fiscal_year)->toBeNull()
+        ->and($document->version)->toBe('2.1')
+        ->and($document->icon)->toBe('bi-file-earmark-pdf')
+        ->and($document->color)->toBe('red');
     Storage::disk('public')->assertExists($document->file_path);
+});
+
+test('the document create form initializes automatic file metadata and publication date', function () {
+    $this->actingAs(adminUser())
+        ->get(route('admin.documents.create'))
+        ->assertOk()
+        ->assertSee('data-document-form', false)
+        ->assertSee('data-default-now', false)
+        ->assertSee('ปีงบประมาณ <span class="text-muted fw-normal">(ไม่บังคับ)</span>', false)
+        ->assertSee('ระบบจะกรอกประเภท ขนาด ไอคอน และสีให้อัตโนมัติ');
+});
+
+test('an administrator must select a supported document category', function () {
+    $this->actingAs(adminUser())->post(route('admin.documents.store'), [
+        'name' => 'เอกสารหมวดที่ไม่รองรับ',
+        'category' => 'หมวดอื่น',
+        'icon' => 'bi-file-earmark-text',
+        'color' => 'blue',
+        'sort_order' => 1,
+        'is_active' => '1',
+    ])->assertSessionHasErrors('category');
+
+    $this->assertDatabaseMissing('portal_documents', [
+        'name' => 'เอกสารหมวดที่ไม่รองรับ',
+    ]);
+});
+
+test('document fiscal year and version are validated', function () {
+    $this->actingAs(adminUser())->post(route('admin.documents.store'), [
+        'name' => 'เอกสาร metadata ไม่ถูกต้อง',
+        'category' => 'คู่มือ',
+        'fiscal_year' => 2300,
+        'version' => str_repeat('x', 31),
+        'icon' => 'bi-file-earmark-text',
+        'color' => 'blue',
+        'sort_order' => 1,
+        'is_active' => '1',
+    ])->assertSessionHasErrors(['fiscal_year', 'version']);
+
+    $this->assertDatabaseMissing('portal_documents', [
+        'name' => 'เอกสาร metadata ไม่ถูกต้อง',
+    ]);
 });
 
 test('uploaded news images can be replaced and are deleted with their record', function () {
@@ -239,7 +288,7 @@ test('published records from the administration area appear on the portal', func
     $this->get(route('systems.index'))
         ->assertOk()
         ->assertSee('ระบบใหม่จากหลังบ้าน')
-        ->assertSee('ภายใน VPN');
+        ->assertSee('ภายใน (VPN)');
 });
 
 test('an administrator can manage the about page responsibilities and personnel', function () {
@@ -282,6 +331,8 @@ test('an administrator can manage the about page responsibilities and personnel'
         'responsibilities' => '<strong onclick="alert(1)">วิเคราะห์ข้อมูล</strong><br><em>พัฒนาระบบสารสนเทศ</em><br><u>ดูแลเว็บไซต์</u><script>alert("x")</script>',
         'initials' => 'TP',
         'color' => 'blue',
+        'email' => 'person@example.test',
+        'phone' => '0 1234 5678',
         'sort_order' => 99,
         'is_head' => '1',
         'is_active' => '1',
@@ -328,5 +379,9 @@ test('an administrator can manage the about page responsibilities and personnel'
         ->assertSee('<u>ดูแลเว็บไซต์</u>', false)
         ->assertDontSee('onclick', false)
         ->assertDontSee('alert("x")', false)
+        ->assertSee('mailto:person@example.test', false)
+        ->assertSee('tel:012345678', false)
+        ->assertSee('<ul>', false)
+        ->assertSeeInOrder(['<strong>วิเคราะห์ข้อมูล</strong>', '<em>พัฒนาระบบสารสนเทศ</em>', '<u>ดูแลเว็บไซต์</u>'], false)
         ->assertSeeInOrder(['บุคลากรทดสอบ', 'ดร.กมลชนก ศรีสุข']);
 });

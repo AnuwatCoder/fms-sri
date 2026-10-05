@@ -37,7 +37,9 @@ class PortalSystem extends Model
         return $query->when($term !== '', fn (Builder $query) => $query->where(
             fn (Builder $query) => $query
                 ->where('name_th', 'like', "%{$term}%")
-                ->orWhere('name_en', 'like', "%{$term}%"),
+                ->orWhere('name_en', 'like', "%{$term}%")
+                ->orWhere('description', 'like', "%{$term}%")
+                ->orWhere('category', 'like', "%{$term}%"),
         ));
     }
 

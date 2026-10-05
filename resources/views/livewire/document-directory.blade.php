@@ -1,10 +1,21 @@
 <div>
     <div class="subpage-toolbar">
-        <div><h2 id="documents-list-title">เอกสารทั้งหมด</h2><p>เลือกดาวน์โหลดเอกสารตามประเภทที่ต้องการ</p></div>
-        <div class="filter-pills mb-0" aria-label="ประเภทเอกสาร">
-            @foreach ($categories as $value)
-                <button type="button" class="{{ $category === $value ? 'active' : '' }}" wire:click="setCategory('{{ $value }}')">{{ $value }}</button>
-            @endforeach
+        <div><h2 id="documents-list-title">เอกสารทั้งหมด</h2><p>เลือกดาวน์โหลดเอกสารตามหมวดที่ต้องการ</p></div>
+        <div class="document-filters">
+            @if ($usesFiscalYear)
+                <label for="fiscalYearFilter">ปีงบประมาณ</label>
+                <select class="form-select" id="fiscalYearFilter" wire:model.live="fiscalYear">
+                    <option value="">ทุกปี</option>
+                    @foreach ($fiscalYears as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            @endif
+            <div class="filter-pills mb-0" aria-label="หมวดเอกสาร">
+                @foreach ($categories as $value)
+                    <button type="button" class="{{ $category === $value ? 'active' : '' }}" wire:click="setCategory('{{ $value }}')">{{ $value }}</button>
+                @endforeach
+            </div>
         </div>
     </div>
     <div class="position-relative">
@@ -14,7 +25,7 @@
                 <article class="document-row" role="listitem" wire:key="document-{{ $document->id }}">
                     <span class="document-row__icon document-row__icon--{{ $document->color }}" aria-hidden="true"><i class="bi {{ $document->icon }}"></i></span>
                     <div class="document-row__content"><span class="document-row__category">{{ $document->category }}</span><h2>{{ $document->name }}</h2><p>{{ $document->description }}</p></div>
-                    <div class="document-row__meta"><span>{{ $document->file_type }}</span><small>{{ $document->file_size }}</small><small>อัปเดต {{ $document->display_date }}</small></div>
+                    <div class="document-row__meta"><span>{{ $document->file_type }}</span>@if ($document->fiscal_year)<small>ปีงบประมาณ {{ $document->fiscal_year }}</small>@endif @if ($document->version)<small>เวอร์ชัน {{ $document->version }}</small>@endif<small>{{ $document->file_size }}</small><small>อัปเดต {{ $document->display_date }}</small></div>
                     <a class="document-row__download" href="{{ $document->download_url }}" aria-label="ดาวน์โหลด {{ $document->name }}"><i class="bi bi-download"></i><span>ดาวน์โหลด</span></a>
                 </article>
             @empty

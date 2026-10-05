@@ -61,6 +61,8 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('category')->nullable();
+            $table->unsignedSmallInteger('fiscal_year')->nullable();
+            $table->string('version', 30)->nullable();
             $table->string('file_type', 20)->nullable();
             $table->string('file_size', 30)->nullable();
             $table->string('file_path')->nullable();

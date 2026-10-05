@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\DocumentCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PortalDocumentRequest;
 use App\Models\PortalDocument;
 use App\Services\PortalDocumentService;
+use App\Support\DocumentFilePresentation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -26,7 +28,11 @@ class PortalDocumentController extends Controller
 
     public function create(): View
     {
-        return view('admin.documents.create', ['document' => new PortalDocument]);
+        return view('admin.documents.create', [
+            'document' => new PortalDocument,
+            'categories' => DocumentCategory::options(),
+            'filePresentations' => DocumentFilePresentation::presets(),
+        ]);
     }
 
     public function store(PortalDocumentRequest $request, PortalDocumentService $service): RedirectResponse
@@ -38,7 +44,11 @@ class PortalDocumentController extends Controller
 
     public function edit(PortalDocument $document): View
     {
-        return view('admin.documents.edit', compact('document'));
+        return view('admin.documents.edit', [
+            'document' => $document,
+            'categories' => DocumentCategory::options(),
+            'filePresentations' => DocumentFilePresentation::presets(),
+        ]);
     }
 
     public function update(PortalDocumentRequest $request, PortalDocument $document, PortalDocumentService $service): RedirectResponse

@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
+            SeoSettingSeeder::class,
             PortalContentSeeder::class,
             AboutContentSeeder::class,
         ]);

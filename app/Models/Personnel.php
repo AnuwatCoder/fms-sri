@@ -29,6 +29,21 @@ class Personnel extends Model
         return $query->where('is_active', true)->orderByDesc('is_head')->orderBy('sort_order')->orderBy('id');
     }
 
+    public function scopeSearch(Builder $query, ?string $term): Builder
+    {
+        $term = trim((string) $term);
+
+        return $query->when($term !== '', fn (Builder $query) => $query->where(
+            fn (Builder $query) => $query
+                ->where('name_th', 'like', "%{$term}%")
+                ->orWhere('name_en', 'like', "%{$term}%")
+                ->orWhere('position_th', 'like', "%{$term}%")
+                ->orWhere('position_en', 'like', "%{$term}%")
+                ->orWhere('unit', 'like', "%{$term}%")
+                ->orWhere('responsibilities', 'like', "%{$term}%"),
+        ));
+    }
+
     public function getPhotoUrlAttribute(): ?string
     {
         if (! $this->photo_path) {
@@ -48,5 +63,22 @@ class Personnel extends Model
     public function getResponsibilitiesTextAttribute(): string
     {
         return RichText::toPlainText($this->responsibilities);
+    }
+
+    /** @return array<int, string> */
+    public function getResponsibilityItemsAttribute(): array
+    {
+        return RichText::toListItems($this->responsibilities);
+    }
+
+    public function getPhoneUrlAttribute(): ?string
+    {
+        if (! $this->phone) {
+            return null;
+        }
+
+        $number = preg_replace('/[^\d+]/', '', $this->phone) ?? '';
+
+        return $number !== '' ? 'tel:'.$number : null;
     }
 }

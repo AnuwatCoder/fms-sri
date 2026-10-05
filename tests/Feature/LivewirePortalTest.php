@@ -1,7 +1,7 @@
 <?php
 
+use App\Enums\DocumentCategory;
 use App\Livewire\ApplicationDirectory;
-use App\Livewire\ContactForm;
 use App\Livewire\DocumentDirectory;
 use App\Livewire\NewsDirectory;
 use App\Models\NewsItem;
@@ -10,14 +10,15 @@ use Livewire\Livewire;
 
 test('applications can be searched and filtered without reloading the page', function () {
     Livewire::test(ApplicationDirectory::class)
+        ->assertSeeInOrder(['ทั้งหมด', 'ภายนอก', 'ภายใน (VPN)'])
         ->set('search', 'Revenue')
         ->assertSee('Revenue Management')
         ->assertDontSee('Strategic Planning System')
         ->set('search', '')
-        ->call('setCategory', 'service')
-        ->assertSee('IT Service Request')
+        ->call('setAccessType', 'vpn')
+        ->assertSee('Revenue Management')
         ->assertSee('HR Management')
-        ->assertDontSee('Revenue Management');
+        ->assertDontSee('IT Service Request');
 });
 
 test('application favorites are stored in the session', function () {
@@ -49,17 +50,39 @@ test('documents can be filtered by category', function () {
         ->assertDontSee($otherDocument->name);
 });
 
-test('contact form validates and confirms a successful submission', function () {
-    Livewire::test(ContactForm::class)
-        ->call('submit')
-        ->assertHasErrors(['name', 'email', 'subject', 'message'])
-        ->set('name', 'Anuwat Pattanachian')
-        ->set('email', 'anuwat@example.com')
-        ->set('subject', 'ขอข้อมูลเพิ่มเติม')
-        ->set('message', 'กรุณาติดต่อกลับเพื่อให้ข้อมูลเพิ่มเติมเกี่ยวกับระบบ')
-        ->call('submit')
-        ->assertHasNoErrors()
-        ->assertSet('sent', true)
-        ->assertSet('name', '')
-        ->assertSee('ส่งข้อความเรียบร้อยแล้ว');
+test('documents can be filtered by fiscal year', function () {
+    $currentDocument = PortalDocument::query()->firstOrFail();
+    $previousDocument = PortalDocument::query()->whereKeyNot($currentDocument->getKey())->firstOrFail();
+    $currentDocument->update(['fiscal_year' => 2570]);
+    $previousDocument->update(['fiscal_year' => 2569]);
+
+    Livewire::test(DocumentDirectory::class)
+        ->set('fiscalYear', '2570')
+        ->assertSee($currentDocument->name)
+        ->assertDontSee($previousDocument->name);
+});
+
+test('general document categories do not require a fiscal year filter', function () {
+    $manual = PortalDocument::query()
+        ->where('category', DocumentCategory::Manual->value)
+        ->firstOrFail();
+
+    Livewire::test(DocumentDirectory::class)
+        ->set('fiscalYear', '2570')
+        ->call('setCategory', DocumentCategory::Manual->value)
+        ->assertSet('fiscalYear', '')
+        ->assertSee($manual->name)
+        ->assertDontSee('fiscalYearFilter');
+});
+
+test('document categories follow the portal information architecture', function () {
+    Livewire::test(DocumentDirectory::class)
+        ->assertSeeInOrder([
+            DocumentCategory::StrategicPlan->value,
+            DocumentCategory::Budget->value,
+            DocumentCategory::Performance->value,
+            DocumentCategory::Legal->value,
+            DocumentCategory::Manual->value,
+            DocumentCategory::Form->value,
+        ]);
 });

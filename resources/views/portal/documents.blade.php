@@ -1,6 +1,6 @@
-<x-portal-layout title="เอกสารและดาวน์โหลด" description="ดาวน์โหลดคู่มือ แบบฟอร์ม นโยบาย และแนวปฏิบัติของหน่วยงาน">
+<x-portal-layout title="เอกสารและดาวน์โหลด" description="ดาวน์โหลดแผนยุทธศาสตร์ งบประมาณ ตัวชี้วัด กฎหมาย คู่มือ และแบบฟอร์มของหน่วยงาน">
     <main id="main-content">
-        <x-page-hero title="เอกสาร/ดาวน์โหลด" eyebrow="DOCUMENTS & DOWNLOADS" description="รวบรวมคู่มือ แบบฟอร์ม นโยบาย และแนวปฏิบัติที่เกี่ยวข้องไว้ในที่เดียว" icon="bi-folder-fill" />
+        <x-page-hero title="เอกสาร/ดาวน์โหลด" eyebrow="DOCUMENTS & DOWNLOADS" description="รวมแผนยุทธศาสตร์ งบประมาณ ตัวชี้วัด กฎหมาย คู่มือ และแบบฟอร์มไว้ในที่เดียว" icon="bi-folder-fill" />
 
         <section class="subpage-content" aria-labelledby="documents-list-title">
             <div class="container-fluid">

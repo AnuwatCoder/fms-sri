@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\SystemAccessType;
 use App\Models\PortalSystem;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
@@ -13,8 +14,8 @@ class ApplicationDirectory extends Component
     #[Url(as: 'q', except: '')]
     public string $search = '';
 
-    #[Url(except: 'all')]
-    public string $category = 'all';
+    #[Url(as: 'access', except: 'all')]
+    public string $accessType = 'all';
 
     public bool $compact = false;
 
@@ -30,10 +31,10 @@ class ApplicationDirectory extends Component
         );
     }
 
-    public function setCategory(string $category): void
+    public function setAccessType(string $accessType): void
     {
-        if (in_array($category, ['all', 'plan', 'revenue', 'data', 'service'], true)) {
-            $this->category = $category;
+        if (in_array($accessType, ['all', ...array_keys(SystemAccessType::options())], true)) {
+            $this->accessType = $accessType;
         }
     }
 
@@ -56,7 +57,7 @@ class ApplicationDirectory extends Component
     public function render(): View
     {
         $applications = PortalSystem::published()->get()
-            ->when($this->category !== 'all', fn ($items) => $items->where('group_key', $this->category))
+            ->when($this->accessType !== 'all', fn ($items) => $items->where('access_type', $this->accessType))
             ->when($this->search !== '', function ($items) {
                 $query = Str::lower(trim($this->search));
 
@@ -81,6 +82,7 @@ class ApplicationDirectory extends Component
         return view('livewire.application-directory', [
             'applications' => $applications,
             'totalApplications' => PortalSystem::published()->count(),
+            'accessTypes' => ['all' => 'ทั้งหมด', ...SystemAccessType::options()],
         ]);
     }
 }

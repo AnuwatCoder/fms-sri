@@ -31,24 +31,22 @@
                         <h2 id="personnel-title">{{ $aboutPage->personnel_title }}</h2>
                         <p>{{ $aboutPage->personnel_description }}</p>
                     </div>
-                    <div class="row g-4">
-                        @foreach ($personnel as $person)
-                            <div class="col-sm-6 col-xl-3">
-                                <article class="person-card person-card--{{ $person->color }} h-100">
-                                    <div class="person-card__avatar" aria-hidden="true">@if ($person->photo_url)<img src="{{ $person->photo_url }}" alt="">@else<span>{{ $person->initials }}</span>@endif</div>
-                                    <div class="person-card__body">
-                                        <span class="person-card__unit">{{ $person->unit }}</span>
-                                        @if ($person->is_head)<span class="person-card__head"><i class="bi bi-star-fill"></i> หัวหน้าหน่วยงาน</span>@endif
-                                        <h3>{{ $person->name_th }}</h3>
-                                        <p class="person-card__name-en">{{ $person->name_en }}</p>
-                                        <p class="person-card__position">{{ $person->position_th }}<small>{{ $person->position_en }}</small></p>
-                                        @if ($person->responsibilities)
-                                            <div class="person-card__responsibilities"><strong><i class="bi bi-list-check"></i> ภาระงานที่รับผิดชอบ</strong><p>{!! $person->responsibilities_html !!}</p></div>
-                                        @endif
-                                    </div>
-                                </article>
+                    <div class="personnel-chart">
+                        @if ($personnelHead)
+                            <div class="personnel-head">
+                                <x-personnel-card :person="$personnelHead" featured />
                             </div>
-                        @endforeach
+                        @endif
+
+                        @if ($personnelMembers->isNotEmpty())
+                            <div class="row g-4 justify-content-center personnel-members">
+                                @foreach ($personnelMembers as $person)
+                                    <div class="col-sm-6 col-lg-3">
+                                        <x-personnel-card :person="$person" class="h-100" />
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </section>
             </div>

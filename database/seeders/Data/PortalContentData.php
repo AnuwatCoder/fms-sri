@@ -2,6 +2,9 @@
 
 namespace Database\Seeders\Data;
 
+use App\Enums\DocumentCategory;
+use App\Support\ThaiFiscalYear;
+
 class PortalContentData
 {
     /** @return array<int, array<string, mixed>> */
@@ -210,7 +213,7 @@ class PortalContentData
                 'starts_days_from_now' => 21,
                 'start_time' => '10:00',
                 'end_time' => '15:00',
-                'place' => 'งานแผนยุทธศาสตร์ฯ',
+                'place' => 'งานยุทธศาสตร์ฯ',
                 'url' => '#',
                 'color' => 'blue',
                 'is_active' => true,
@@ -225,7 +228,9 @@ class PortalContentData
             [
                 'name' => 'คู่มือการใช้งานระบบสารสนเทศ',
                 'description' => 'คู่มือเริ่มต้นใช้งานและแนวทางแก้ไขปัญหาเบื้องต้น',
-                'category' => 'คู่มือ',
+                'category' => DocumentCategory::Manual->value,
+                'fiscal_year' => null,
+                'version' => '1.0',
                 'file_type' => 'PDF',
                 'file_size' => '4.2 MB',
                 'url' => '#',
@@ -237,7 +242,9 @@ class PortalContentData
             [
                 'name' => 'แบบฟอร์มขอรับบริการ IT',
                 'description' => 'แบบฟอร์มสำหรับแจ้งปัญหาและขอรับบริการด้านเทคโนโลยีสารสนเทศ',
-                'category' => 'แบบฟอร์ม',
+                'category' => DocumentCategory::Form->value,
+                'fiscal_year' => null,
+                'version' => '1.0',
                 'file_type' => 'DOCX',
                 'file_size' => '86 KB',
                 'url' => '#',
@@ -249,7 +256,9 @@ class PortalContentData
             [
                 'name' => 'แนวปฏิบัติการบริหารรายได้',
                 'description' => 'หลักเกณฑ์และขั้นตอนการดำเนินงานด้านการบริหารรายได้และโครงการบริการวิชาการ',
-                'category' => 'แนวปฏิบัติ',
+                'category' => DocumentCategory::Budget->value,
+                'fiscal_year' => ThaiFiscalYear::current(),
+                'version' => '1.0',
                 'file_type' => 'PDF',
                 'file_size' => '2.8 MB',
                 'url' => '#',
@@ -261,7 +270,9 @@ class PortalContentData
             [
                 'name' => 'นโยบายและแนวทางการดำเนินงาน',
                 'description' => 'นโยบายสำคัญและกรอบการดำเนินงานของหน่วยงาน',
-                'category' => 'นโยบาย',
+                'category' => DocumentCategory::Legal->value,
+                'fiscal_year' => null,
+                'version' => '1.0',
                 'file_type' => 'PDF',
                 'file_size' => '3.5 MB',
                 'url' => '#',
@@ -273,7 +284,9 @@ class PortalContentData
             [
                 'name' => 'แบบฟอร์มรายงานผลการดำเนินงานโครงการ',
                 'description' => 'แบบฟอร์มสรุปผลผลิต ผลลัพธ์ งบประมาณ และปัญหาอุปสรรคของโครงการ',
-                'category' => 'แบบฟอร์ม',
+                'category' => DocumentCategory::Form->value,
+                'fiscal_year' => null,
+                'version' => '1.0',
                 'file_type' => 'XLSX',
                 'file_size' => '124 KB',
                 'url' => '#',
@@ -285,13 +298,29 @@ class PortalContentData
             [
                 'name' => 'ปฏิทินการติดตามตัวชี้วัดประจำปี',
                 'description' => 'กำหนดรอบการรายงานและผู้รับผิดชอบตัวชี้วัดตามแผนยุทธศาสตร์',
-                'category' => 'แผนงาน',
+                'category' => DocumentCategory::Performance->value,
+                'fiscal_year' => ThaiFiscalYear::current(),
+                'version' => '1.0',
                 'file_type' => 'XLSX',
                 'file_size' => '98 KB',
                 'url' => '#',
                 'icon' => 'bi-file-earmark-excel',
                 'color' => 'green',
                 'published_days_ago' => 25,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'แผนยุทธศาสตร์คณะวิทยาการจัดการ',
+                'description' => 'กรอบทิศทาง เป้าประสงค์ และแนวทางการพัฒนาคณะวิทยาการจัดการในระยะยาว',
+                'category' => DocumentCategory::StrategicPlan->value,
+                'fiscal_year' => ThaiFiscalYear::current(),
+                'version' => '1.0',
+                'file_type' => 'PDF',
+                'file_size' => '5.1 MB',
+                'url' => '#',
+                'icon' => 'bi-file-earmark-pdf',
+                'color' => 'purple',
+                'published_days_ago' => 30,
                 'is_active' => true,
             ],
         ];
@@ -311,6 +340,8 @@ class PortalContentData
                 'initials' => 'KS',
                 'photo_path' => 'images/portal/personnel/sample-ks.svg',
                 'color' => 'navy',
+                'email' => 'kamonchanok@example.test',
+                'phone' => '0 0000 0001',
             ],
             [
                 'name_th' => 'นางสาวพิมพ์พิศา วัฒนกุล',
@@ -322,6 +353,8 @@ class PortalContentData
                 'initials' => 'PW',
                 'photo_path' => 'images/portal/personnel/sample-pw.svg',
                 'color' => 'blue',
+                'email' => 'pimpisa@example.test',
+                'phone' => '0 0000 0002',
             ],
             [
                 'name_th' => 'นายณัฐพงศ์ แซ่ลิ้ม',
@@ -333,6 +366,8 @@ class PortalContentData
                 'initials' => 'NS',
                 'photo_path' => 'images/portal/personnel/sample-ns.svg',
                 'color' => 'green',
+                'email' => 'nattapong@example.test',
+                'phone' => '0 0000 0003',
             ],
             [
                 'name_th' => 'Anuwat Pattanachian',
@@ -344,6 +379,8 @@ class PortalContentData
                 'initials' => 'AP',
                 'photo_path' => 'images/portal/personnel/sample-ap.svg',
                 'color' => 'purple',
+                'email' => 'anuwat@example.test',
+                'phone' => '0 0000 0004',
             ],
         ];
     }

@@ -12,13 +12,13 @@
         <div class="row g-4">
             @forelse ($newsItems as $news)
                 <div class="col-md-6 col-lg-4" wire:key="news-{{ $news->id }}">
-                    <article class="news-list-card h-100">
+                    <article class="news-list-card h-100 position-relative">
                         <div class="news-list-card__image"><img src="{{ $news->image_url }}" alt="" loading="lazy"><span>{{ $news->category }}</span></div>
                         <div class="news-list-card__body">
                             <time><i class="bi bi-calendar3" aria-hidden="true"></i> {{ $news->display_date }}</time>
                             <h2>{{ $news->title }}</h2>
                             <p>{{ $news->description }}</p>
-                            <a href="{{ $news->url ?: '#' }}" aria-label="อ่านรายละเอียด: {{ $news->title }}">อ่านรายละเอียด <i class="bi bi-arrow-right"></i></a>
+                            <a class="stretched-link" href="{{ route('news.show', $news) }}" aria-label="อ่านรายละเอียด: {{ $news->title }}">อ่านรายละเอียด <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </article>
                 </div>

@@ -2,13 +2,11 @@
     <nav class="navbar navbar-expand-xl bg-white" aria-label="เมนูหลัก">
         <div class="container-fluid">
             <a class="navbar-brand brand-lockup" href="{{ route('home') }}" aria-label="หน้าหลัก คณะวิทยาการจัดการ" wire:navigate>
-                <span class="brand-mark" aria-hidden="true">PSU</span>
-                <span class="brand-divider" aria-hidden="true"></span>
-                <span class="brand-copy"><strong>คณะวิทยาการจัดการ</strong><small>Faculty of Management Sciences</small></span>
+                <img class="brand-logo" src="{{ asset('images/psu-fms-logo-th.png') }}" width="3616" height="800" alt="">
             </a>
 
             <div class="navbar-actions d-flex align-items-center gap-1 order-xl-3">
-                <button class="header-icon d-none d-sm-inline-flex" type="button" aria-label="ค้นหา" data-focus-search data-search-url="{{ route('systems.index') }}"><i class="bi bi-search" aria-hidden="true"></i></button>
+                <a class="header-icon d-none d-sm-inline-flex" href="{{ route('search.index') }}" aria-label="ค้นหาทั้งเว็บไซต์" wire:navigate><i class="bi bi-search" aria-hidden="true"></i></a>
                 <button class="navbar-toggler ms-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavigation" aria-controls="mobileNavigation" aria-label="เปิดเมนู"><span class="navbar-toggler-icon"></span></button>
             </div>
 
@@ -37,6 +35,7 @@
             <a class="{{ request()->routeIs('systems.*') ? 'active' : '' }}" href="{{ route('systems.index') }}" data-bs-dismiss="offcanvas" wire:navigate><i class="bi bi-grid-fill"></i> ระบบสารสนเทศ</a>
             <a class="{{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('news.index') }}" data-bs-dismiss="offcanvas" wire:navigate><i class="bi bi-newspaper"></i> ข่าวสาร</a>
             <a class="{{ request()->routeIs('documents.*') ? 'active' : '' }}" href="{{ route('documents.index') }}" data-bs-dismiss="offcanvas" wire:navigate><i class="bi bi-file-earmark-text-fill"></i> เอกสาร/ดาวน์โหลด</a>
+            <a class="{{ request()->routeIs('search.*') ? 'active' : '' }}" href="{{ route('search.index') }}" data-bs-dismiss="offcanvas" wire:navigate><i class="bi bi-search"></i> ค้นหาทั้งเว็บไซต์</a>
             <a class="{{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}" data-bs-dismiss="offcanvas" wire:navigate><i class="bi bi-building"></i> เกี่ยวกับหน่วยงาน</a>
             <a class="{{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}" data-bs-dismiss="offcanvas" wire:navigate><i class="bi bi-geo-alt-fill"></i> ติดต่อเรา</a>
         </nav>

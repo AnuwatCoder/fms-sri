@@ -9,15 +9,9 @@
                 <button type="submit" aria-label="ค้นหา"><i class="bi bi-search" aria-hidden="true"></i></button>
             </form>
         </div>
-        <div class="filter-pills" aria-label="หมวดหมู่ระบบ">
-            @foreach ([
-                'all' => 'ทั้งหมด',
-                'plan' => 'แผนและโครงการ',
-                'revenue' => 'บริหารรายได้',
-                'data' => 'ข้อมูลและรายงาน',
-                'service' => 'บริการและบุคลากร',
-            ] as $value => $label)
-                <button type="button" class="{{ $category === $value ? 'active' : '' }}" wire:click="setCategory('{{ $value }}')">
+        <div class="filter-pills" aria-label="การเข้าถึงระบบ">
+            @foreach ($accessTypes as $value => $label)
+                <button type="button" class="{{ $accessType === $value ? 'active' : '' }}" wire:click="setAccessType('{{ $value }}')">
                     {{ $label }} @if ($value === 'all') <strong>{{ $totalApplications }}</strong> @endif
                 </button>
             @endforeach

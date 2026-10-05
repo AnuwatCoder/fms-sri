@@ -1,4 +1,4 @@
-<x-portal-layout title="ระบบสารสนเทศ" description="รวมระบบสารสนเทศและบริการดิจิทัลของงานแผนยุทธศาสตร์ บริหารรายได้ และนวัตกรรมสารสนเทศ">
+<x-portal-layout title="ระบบสารสนเทศ" description="รวมระบบสารสนเทศและบริการดิจิทัลของงานยุทธศาสตร์ บริหารรายได้ และนวัตกรรมสารสนเทศ">
     <main id="main-content">
         <x-page-hero title="ระบบสารสนเทศ" eyebrow="INFORMATION SYSTEMS" description="ศูนย์รวมระบบและบริการดิจิทัลสำหรับสนับสนุนการปฏิบัติงานของหน่วยงาน" icon="bi-grid-fill" />
 

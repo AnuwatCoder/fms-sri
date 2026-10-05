@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\DocumentCategory;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PortalDocumentRequest extends FormRequest
 {
@@ -11,13 +14,15 @@ class PortalDocumentRequest extends FormRequest
         return true;
     }
 
-    /** @return array<string, array<int, string>> */
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
-            'category' => ['nullable', 'string', 'max:100'],
+            'category' => ['required', Rule::enum(DocumentCategory::class)],
+            'fiscal_year' => ['nullable', 'integer', 'min:2400', 'max:2800'],
+            'version' => ['nullable', 'string', 'max:30'],
             'file' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,csv,zip', 'max:20480'],
             'remove_file' => ['boolean'],
             'url' => ['nullable', 'string', 'max:2048'],

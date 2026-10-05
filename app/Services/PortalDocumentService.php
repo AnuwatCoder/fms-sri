@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\PortalDocument;
+use App\Support\DocumentFilePresentation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 
@@ -20,9 +21,14 @@ class PortalDocumentService
         if ($file) {
             $filePath = $this->files->store($file, 'portal/documents');
             $this->files->delete($document->file_path);
-            $attributes['file_path'] = $filePath;
-            $attributes['file_type'] = strtoupper($file->getClientOriginalExtension());
-            $attributes['file_size'] = $this->formatBytes($file->getSize());
+            $attributes = array_replace(
+                $attributes,
+                DocumentFilePresentation::forExtension($file->getClientOriginalExtension()),
+                [
+                    'file_path' => $filePath,
+                    'file_size' => DocumentFilePresentation::formatBytes($file->getSize()),
+                ],
+            );
         } elseif ($removeFile) {
             $this->files->delete($document->file_path);
             $attributes['file_path'] = null;
@@ -37,14 +43,5 @@ class PortalDocumentService
     {
         $this->files->delete($document->file_path);
         $document->delete();
-    }
-
-    private function formatBytes(int $bytes): string
-    {
-        if ($bytes >= 1048576) {
-            return round($bytes / 1048576, 1).' MB';
-        }
-
-        return round($bytes / 1024, 1).' KB';
     }
 }

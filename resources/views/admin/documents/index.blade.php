@@ -11,7 +11,7 @@
                 <tbody>
                     @forelse ($documents as $document)
                         <tr>
-                            <td><div class="admin-item-title"><span class="admin-item-icon admin-item-icon--{{ $document->color }}"><i class="bi {{ $document->icon }}"></i></span><div><strong>{{ $document->name }}</strong><small>{{ $document->category ?: '-' }} · อัปเดต {{ $document->display_date }}</small></div></div></td>
+                            <td><div class="admin-item-title"><span class="admin-item-icon admin-item-icon--{{ $document->color }}"><i class="bi {{ $document->icon }}"></i></span><div><strong>{{ $document->name }}</strong><small>{{ $document->category ?: '-' }}@if ($document->fiscal_year) · ปีงบประมาณ {{ $document->fiscal_year }}@endif @if ($document->version) · เวอร์ชัน {{ $document->version }}@endif · อัปเดต {{ $document->display_date }}</small></div></div></td>
                             <td>{{ $document->file_type ?: '-' }}</td><td>{{ $document->file_size ?: '-' }}</td><td><span class="admin-status {{ $document->is_active ? 'is-active' : '' }}">{{ $document->is_active ? 'เผยแพร่' : 'ซ่อน' }}</span></td>
                             <td class="text-end"><div class="admin-actions"><a href="{{ route('admin.documents.edit', $document) }}" aria-label="แก้ไข"><i class="bi bi-pencil"></i></a><form method="post" action="{{ route('admin.documents.destroy', $document) }}" onsubmit="return confirm('ยืนยันการลบเอกสารนี้?')">@csrf @method('delete')<button type="submit" aria-label="ลบ"><i class="bi bi-trash3"></i></button></form></div></td>
                         </tr>

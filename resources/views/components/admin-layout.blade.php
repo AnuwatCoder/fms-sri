@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }} | FMS Portal Admin</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     @vite(['resources/js/app.js'])
 </head>
 <body class="admin-body">
@@ -23,6 +24,7 @@
                 <a class="{{ request()->routeIs('admin.news.*') ? 'active' : '' }}" href="{{ route('admin.news.index') }}"><i class="bi bi-newspaper"></i><span>ข่าวและประกาศ</span></a>
                 <a class="{{ request()->routeIs('admin.events.*') ? 'active' : '' }}" href="{{ route('admin.events.index') }}"><i class="bi bi-calendar-event"></i><span>ปฏิทินกิจกรรม</span></a>
                 <a class="{{ request()->routeIs('admin.documents.*') ? 'active' : '' }}" href="{{ route('admin.documents.index') }}"><i class="bi bi-folder2-open"></i><span>เอกสารดาวน์โหลด</span></a>
+                <a class="{{ request()->routeIs('admin.seo.*') ? 'active' : '' }}" href="{{ route('admin.seo.edit') }}"><i class="bi bi-search-heart"></i><span>ตั้งค่า SEO</span></a>
                 <div class="admin-nav-section {{ request()->routeIs('admin.about.*') ? 'is-open' : '' }}">
                     <span><i class="bi bi-building"></i>เกี่ยวกับหน่วยงาน</span>
                     <div class="admin-subnav">
@@ -67,6 +69,7 @@
                 <a href="{{ route('admin.news.index') }}"><i class="bi bi-newspaper"></i> ข่าวและประกาศ</a>
                 <a href="{{ route('admin.events.index') }}"><i class="bi bi-calendar-event"></i> ปฏิทินกิจกรรม</a>
                 <a href="{{ route('admin.documents.index') }}"><i class="bi bi-folder2-open"></i> เอกสารดาวน์โหลด</a>
+                <a href="{{ route('admin.seo.edit') }}"><i class="bi bi-search-heart"></i> ตั้งค่า SEO</a>
                 <div class="admin-nav-section is-open">
                     <span><i class="bi bi-building"></i>เกี่ยวกับหน่วยงาน</span>
                     <div class="admin-subnav">

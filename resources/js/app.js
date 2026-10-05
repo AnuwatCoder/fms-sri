@@ -128,5 +128,69 @@ const initializeRichTextEditors = () => {
     });
 };
 
+const formatFileSize = (bytes) => {
+    if (bytes >= 1048576) {
+        return `${Math.round((bytes / 1048576) * 10) / 10} MB`;
+    }
+
+    return `${Math.round((bytes / 1024) * 10) / 10} KB`;
+};
+
+const currentLocalDateTime = () => {
+    const now = new Date();
+    const localTime = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
+
+    return localTime.toISOString().slice(0, 16);
+};
+
+const initializeDocumentForms = () => {
+    document.querySelectorAll('[data-document-form]').forEach((form) => {
+        if (form.dataset.documentFormInitialized === 'true') {
+            return;
+        }
+
+        const fileInput = form.querySelector('[data-document-file]');
+        const fileTypeInput = form.querySelector('[data-document-file-type]');
+        const fileSizeInput = form.querySelector('[data-document-file-size]');
+        const iconInput = form.querySelector('[data-document-icon]');
+        const colorInput = form.querySelector('[data-document-color]');
+        const publishedAtInput = form.querySelector('[data-document-published-at]');
+
+        if (publishedAtInput?.hasAttribute('data-default-now') && ! publishedAtInput.value) {
+            publishedAtInput.value = currentLocalDateTime();
+        }
+
+        if (! fileInput || ! fileTypeInput || ! fileSizeInput || ! iconInput || ! colorInput) {
+            return;
+        }
+
+        const presentations = JSON.parse(form.dataset.filePresentations || '{}');
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files?.[0];
+
+            if (! file) {
+                return;
+            }
+
+            const extension = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : '';
+            const presentation = presentations[extension] || {
+                file_type: extension.toUpperCase(),
+                icon: 'bi-file-earmark-text',
+                color: 'blue',
+            };
+
+            fileTypeInput.value = presentation.file_type;
+            fileSizeInput.value = formatFileSize(file.size);
+            iconInput.value = presentation.icon;
+            colorInput.value = presentation.color;
+        });
+
+        form.dataset.documentFormInitialized = 'true';
+    });
+};
+
 document.addEventListener('DOMContentLoaded', initializeRichTextEditors);
 document.addEventListener('livewire:navigated', initializeRichTextEditors);
+document.addEventListener('DOMContentLoaded', initializeDocumentForms);
+document.addEventListener('livewire:navigated', initializeDocumentForms);

@@ -38,7 +38,12 @@ class NewsItem extends Model
     {
         $term = trim((string) $term);
 
-        return $query->when($term !== '', fn (Builder $query) => $query->where('title', 'like', "%{$term}%"));
+        return $query->when($term !== '', fn (Builder $query) => $query->where(
+            fn (Builder $query) => $query
+                ->where('title', 'like', "%{$term}%")
+                ->orWhere('description', 'like', "%{$term}%")
+                ->orWhere('category', 'like', "%{$term}%"),
+        ));
     }
 
     public function getDisplayDateAttribute(): string

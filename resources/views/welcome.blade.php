@@ -5,7 +5,7 @@
                 <div class="row align-items-center g-5">
                     <div class="col-lg-8">
                         <p class="hero__eyebrow">STRATEGIC WORK, REVENUE MANAGEMENT AND INFORMATION INNOVATION DIVISION</p>
-                        <h1 id="hero-title">งานแผนยุทธศาสตร์ บริหารรายได้<br class="d-none d-md-block"> และนวัตกรรมสารสนเทศ</h1>
+                        <h1 id="hero-title">งานยุทธศาสตร์ บริหารรายได้<br class="d-none d-md-block"> และนวัตกรรมสารสนเทศ</h1>
                         <span class="hero__rule" aria-hidden="true"></span>
                         <p class="hero__lead">ขับเคลื่อนองค์กรด้วยข้อมูล นวัตกรรม และการบริหารเชิงยุทธศาสตร์</p>
                         <p class="hero__lead-en">Driving the organization with data, innovation, and strategic management</p>
@@ -29,17 +29,17 @@
                     <div class="col-xl-8">
                         <nav class="quick-links" aria-label="บริการที่ใช้บ่อย">
                             <a href="{{ route('systems.index') }}"><i class="bi bi-grid-fill"></i><span>ระบบสารสนเทศทั้งหมด</span></a>
-                            <a href="{{ route('documents.index') }}"><i class="bi bi-journal-bookmark-fill"></i><span>คู่มือการใช้งาน</span></a>
-                            <a href="{{ route('documents.index') }}"><i class="bi bi-file-earmark-text-fill"></i><span>แบบฟอร์ม</span></a>
-                            <a href="{{ route('systems.index') }}"><i class="bi bi-headset"></i><span>ขอรับบริการ</span></a>
+                            <a href="{{ route('documents.index', ['category' => 'แผนและยุทธศาสตร์']) }}"><i class="bi bi-bullseye"></i><span>แผนและยุทธศาสตร์</span></a>
+                            <a href="{{ route('documents.index', ['category' => 'งบประมาณ']) }}"><i class="bi bi-wallet2"></i><span>งบประมาณ</span></a>
+                            <a href="{{ route('documents.index', ['category' => 'ตัวชี้วัดและผลการดำเนินงาน']) }}"><i class="bi bi-bar-chart-line-fill"></i><span>ตัวชี้วัด</span></a>
                             <a href="{{ route('contact') }}"><i class="bi bi-envelope"></i><span>ติดต่อเรา</span></a>
                         </nav>
                     </div>
                     <div class="col-xl-4">
-                        <form class="portal-search" role="search" action="{{ route('systems.index') }}" method="get">
-                            <label class="visually-hidden" for="portalSearch">ค้นหาระบบหรือบริการ</label>
+                        <form class="portal-search" role="search" action="{{ route('search.index') }}" method="get">
+                            <label class="visually-hidden" for="portalSearch">ค้นหาทั้งเว็บไซต์</label>
                             <i class="bi bi-search" aria-hidden="true"></i>
-                            <input id="portalSearch" name="q" type="search" placeholder="ค้นหาระบบหรือบริการ..." autocomplete="off">
+                            <input id="portalSearch" name="q" type="search" placeholder="ค้นหาข้อมูลทั้งเว็บไซต์..." autocomplete="off">
                             <button type="submit" aria-label="ค้นหา"><i class="bi bi-search" aria-hidden="true"></i></button>
                         </form>
                     </div>
@@ -65,14 +65,16 @@
                                 <a href="{{ route('news.index') }}">ดูทั้งหมด <i class="bi bi-arrow-right"></i></a>
                             </div>
                             <div class="row g-3">
-                                @foreach ($newsItems as $news)
+                                @forelse ($newsItems as $news)
                                     <div class="col-md-4">
-                                        <article class="news-card h-100">
+                                        <article class="news-card h-100 position-relative">
                                             <img src="{{ $news->image_url }}" alt="" loading="lazy">
-                                            <div class="news-card__body"><time>{{ $news->display_date }}</time><h3>{{ $news->title }}</h3><p>{{ $news->description }}</p><a href="{{ $news->url ?: '#' }}" aria-label="อ่านเพิ่มเติม: {{ $news->title }}">อ่านเพิ่มเติม <i class="bi bi-arrow-right"></i></a></div>
+                                            <div class="news-card__body"><time>{{ $news->display_date }}</time><h3>{{ $news->title }}</h3><p>{{ $news->description }}</p><a class="stretched-link" href="{{ route('news.show', $news) }}" aria-label="อ่านเพิ่มเติม: {{ $news->title }}">อ่านเพิ่มเติม <i class="bi bi-arrow-right"></i></a></div>
                                         </article>
                                     </div>
-                                @endforeach
+                                @empty
+                                    <div class="col-12"><div class="empty-state" role="status"><i class="bi bi-newspaper" aria-hidden="true"></i><p class="mb-0">ยังไม่มีข่าวสารและประกาศในขณะนี้</p></div></div>
+                                @endforelse
                             </div>
                         </section>
                     </div>
@@ -81,7 +83,7 @@
                         <section class="sidebar-card profile-card" id="profile" aria-labelledby="profile-name">
                             <div class="d-flex align-items-center gap-3">
                                 <span class="avatar" aria-hidden="true">AP</span>
-                                <div class="min-w-0 flex-grow-1"><h2 id="profile-name">{{ auth()->user()?->name ?? 'Anuwat Pattanachian' }}</h2><p>Computer Technical Officer</p><small>งานแผนยุทธศาสตร์ฯ</small></div>
+                                <div class="min-w-0 flex-grow-1"><h2 id="profile-name">{{ auth()->user()?->name ?? 'Anuwat Pattanachian' }}</h2><p>Computer Technical Officer</p><small>งานยุทธศาสตร์ฯ</small></div>
                                 <i class="bi bi-chevron-right text-primary" aria-hidden="true"></i>
                             </div>
                             <div class="profile-stats"><div><i class="bi bi-grid-fill"></i><strong>8</strong><span>ระบบที่ใช้งาน</span></div><div><i class="bi bi-star-fill"></i><strong data-favorite-count>3</strong><span>รายการโปรด</span></div><div><i class="bi bi-clock"></i><strong>12</strong><span>ใช้งานล่าสุด</span></div></div>

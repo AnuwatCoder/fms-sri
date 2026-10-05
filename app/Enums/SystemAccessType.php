@@ -11,7 +11,7 @@ enum SystemAccessType: string
     {
         return match ($this) {
             self::External => 'ภายนอก',
-            self::Vpn => 'ภายใน VPN',
+            self::Vpn => 'ภายใน (VPN)',
         };
     }
 
