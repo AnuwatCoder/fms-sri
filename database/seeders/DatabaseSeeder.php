@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,22 +17,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminPassword = env('ADMIN_PASSWORD');
+        $adminEmail = config('auth.administrator.email');
 
-        if ($adminPassword || app()->environment('testing')) {
-            User::query()->updateOrCreate(
-                ['email' => env('ADMIN_EMAIL', 'admin@fms.local')],
-                [
-                    'name' => env('ADMIN_NAME', 'Portal Administrator'),
-                    'password' => Hash::make($adminPassword ?: 'password'),
-                    'email_verified_at' => now(),
-                    'is_admin' => true,
-                ],
-            );
+        if (is_string($adminEmail) && $adminEmail !== '') {
+            $administrator = User::query()->firstOrNew([
+                'email' => Str::lower(trim($adminEmail)),
+            ]);
+
+            $administrator->fill([
+                'name' => config('auth.administrator.name', 'Portal Administrator'),
+                'email_verified_at' => now(),
+                'is_admin' => true,
+            ]);
+
+            if (! $administrator->exists) {
+                $administrator->password = Hash::make(Str::random(64));
+            }
+
+            $administrator->save();
         }
 
         $this->call([
             SeoSettingSeeder::class,
+            ContactSettingSeeder::class,
             PortalContentSeeder::class,
             AboutContentSeeder::class,
         ]);

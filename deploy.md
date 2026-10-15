@@ -67,12 +67,20 @@ CACHE_STORE=database
 QUEUE_CONNECTION=database
 
 FILESYSTEM_DISK=local
+
+ADMIN_NAME="Portal Administrator"
+ADMIN_EMAIL=admin@example.ac.th
+AUTHENTIK_BASE_URL="https://psusso.psu.ac.th:8443"
+AUTHENTIK_CLIENT_ID="client-id-from-authentik"
+AUTHENTIK_CLIENT_SECRET="client-secret-from-authentik"
+AUTHENTIK_REDIRECT_URI="${APP_URL}/auth/authentik/callback"
 ```
 
 ข้อควรระวัง:
 
 - ห้าม commit `.env` หรือเปิดเผย `APP_KEY`, รหัสผ่านฐานข้อมูล และ credential อื่น
 - `APP_URL` ต้องตรงกับ URL จริงและใช้ `https://`
+- Redirect URI ใน Authentik ต้องตรงกับ `AUTHENTIK_REDIRECT_URI` ทุกตัวอักษร และบัญชีที่จะเข้า `/admin` ต้องใช้อีเมลเดียวกับ `ADMIN_EMAIL`
 - `APP_DEBUG` ต้องเป็น `false` บน production
 - สร้าง `APP_KEY` เพียงครั้งแรกหลังติดตั้ง Composer dependency ในขั้นตอนถัดไป แล้วเก็บค่านี้ไว้ในการสำรองข้อมูล หากเปลี่ยน key ภายหลัง session และข้อมูลที่เข้ารหัสเดิมจะใช้งานไม่ได้
 
@@ -108,13 +116,13 @@ php artisan optimize
 
 ไม่ควรรัน `migrate:fresh` บน production เพราะคำสั่งนี้ลบข้อมูลทั้งหมด
 
-ไม่ต้องรัน seeder ในการ deploy ปกติ หากเป็นการติดตั้งครั้งแรกและต้องการข้อมูลตัวอย่างจริง ๆ ให้ตรวจสอบข้อมูลก่อน ตั้ง `ADMIN_NAME`, `ADMIN_EMAIL` และ `ADMIN_PASSWORD` ชั่วคราวใน `.env` แล้วจึงรัน:
+ไม่ต้องรัน seeder ในการ deploy ปกติ หากเป็นการติดตั้งครั้งแรกและต้องการข้อมูลตัวอย่างจริง ๆ ให้ตรวจสอบข้อมูลก่อน ตั้ง `ADMIN_NAME` และ `ADMIN_EMAIL` ให้ตรงกับบัญชี Authentik ของผู้ดูแล แล้วจึงรัน:
 
 ```bash
 php artisan db:seed --force
 ```
 
-หลังสร้างผู้ดูแลระบบแล้วให้นำ `ADMIN_PASSWORD` ออกจาก `.env` และเปลี่ยนรหัสผ่านเริ่มต้นผ่านขั้นตอนที่หน่วยงานกำหนด การรัน seeder จะสร้างหรืออัปเดตทั้งบัญชีผู้ดูแลและข้อมูลตัวอย่างของ portal จึงไม่ควรรันโดยไม่ตั้งใจ
+ระบบไม่ใช้รหัสผ่านภายในสำหรับหน้า admin แต่จะยืนยันตัวตนผ่าน Authentik และตรวจสิทธิ์จาก `users.is_admin` ในฐานข้อมูล การรัน seeder จะสร้างหรืออัปเดตทั้งบัญชีผู้ดูแลและข้อมูลตัวอย่างของ portal จึงไม่ควรรันโดยไม่ตั้งใจ
 
 ## 6. ตั้งค่า Nginx
 

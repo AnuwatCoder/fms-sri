@@ -80,30 +80,25 @@
                     </div>
 
                     <aside class="col-lg-3 portal-sidebar" aria-label="ข้อมูลสำหรับผู้ใช้">
-                        <section class="sidebar-card profile-card" id="profile" aria-labelledby="profile-name">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="avatar" aria-hidden="true">AP</span>
-                                <div class="min-w-0 flex-grow-1"><h2 id="profile-name">{{ auth()->user()?->name ?? 'Anuwat Pattanachian' }}</h2><p>Computer Technical Officer</p><small>งานยุทธศาสตร์ฯ</small></div>
-                                <i class="bi bi-chevron-right text-primary" aria-hidden="true"></i>
-                            </div>
-                            <div class="profile-stats"><div><i class="bi bi-grid-fill"></i><strong>8</strong><span>ระบบที่ใช้งาน</span></div><div><i class="bi bi-star-fill"></i><strong data-favorite-count>3</strong><span>รายการโปรด</span></div><div><i class="bi bi-clock"></i><strong>12</strong><span>ใช้งานล่าสุด</span></div></div>
-                        </section>
-
                         <section class="sidebar-card" aria-labelledby="calendar-title">
                             <div class="sidebar-heading"><h2 id="calendar-title"><i class="bi bi-calendar-event-fill"></i> ปฏิทินกิจกรรม</h2><a href="{{ route('news.index') }}">ดูทั้งหมด <i class="bi bi-arrow-right"></i></a></div>
                             <div class="event-list" id="calendar">
-                                @foreach ($events as $event)
+                                @forelse ($events as $event)
                                     <article class="event-item event-item--{{ $event->color }}"><time datetime="{{ $event->starts_at->toDateString() }}"><strong>{{ $event->display_day }}</strong><span>{{ $event->display_month }}</span></time><div><h3>{{ $event->title }}</h3><p>{{ $event->display_time }} <span>•</span> {{ $event->place }}</p></div></article>
-                                @endforeach
+                                @empty
+                                    <div class="sidebar-empty-state" role="status"><i class="bi bi-calendar-x" aria-hidden="true"></i><span>ยังไม่มีกิจกรรมในขณะนี้</span></div>
+                                @endforelse
                             </div>
                         </section>
 
                         <section class="sidebar-card" id="documents" aria-labelledby="documents-title">
                             <div class="sidebar-heading"><h2 id="documents-title"><i class="bi bi-folder-fill"></i> เอกสาร/ดาวน์โหลด</h2><a href="{{ route('documents.index') }}">ดูทั้งหมด <i class="bi bi-arrow-right"></i></a></div>
                             <div class="document-list">
-                                @foreach ($documents as $document)
+                                @forelse ($documents as $document)
                                     <a href="{{ $document->download_url }}" class="document-item"><i class="bi {{ $document->icon }} text-{{ $document->color }}" aria-hidden="true"></i><span>{{ $document->name }} <small>({{ $document->file_type }})</small></span></a>
-                                @endforeach
+                                @empty
+                                    <div class="sidebar-empty-state" role="status"><i class="bi bi-folder-x" aria-hidden="true"></i><span>ยังไม่มีเอกสารในขณะนี้</span></div>
+                                @endforelse
                             </div>
                         </section>
                     </aside>

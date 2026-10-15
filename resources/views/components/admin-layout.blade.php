@@ -24,6 +24,7 @@
                 <a class="{{ request()->routeIs('admin.news.*') ? 'active' : '' }}" href="{{ route('admin.news.index') }}"><i class="bi bi-newspaper"></i><span>ข่าวและประกาศ</span></a>
                 <a class="{{ request()->routeIs('admin.events.*') ? 'active' : '' }}" href="{{ route('admin.events.index') }}"><i class="bi bi-calendar-event"></i><span>ปฏิทินกิจกรรม</span></a>
                 <a class="{{ request()->routeIs('admin.documents.*') ? 'active' : '' }}" href="{{ route('admin.documents.index') }}"><i class="bi bi-folder2-open"></i><span>เอกสารดาวน์โหลด</span></a>
+                <a class="{{ request()->routeIs('admin.contact.*') ? 'active' : '' }}" href="{{ route('admin.contact.edit') }}"><i class="bi bi-telephone"></i><span>ช่องทางการติดต่อ</span></a>
                 <a class="{{ request()->routeIs('admin.seo.*') ? 'active' : '' }}" href="{{ route('admin.seo.edit') }}"><i class="bi bi-search-heart"></i><span>ตั้งค่า SEO</span></a>
                 <div class="admin-nav-section {{ request()->routeIs('admin.about.*') ? 'is-open' : '' }}">
                     <span><i class="bi bi-building"></i>เกี่ยวกับหน่วยงาน</span>
@@ -69,6 +70,7 @@
                 <a href="{{ route('admin.news.index') }}"><i class="bi bi-newspaper"></i> ข่าวและประกาศ</a>
                 <a href="{{ route('admin.events.index') }}"><i class="bi bi-calendar-event"></i> ปฏิทินกิจกรรม</a>
                 <a href="{{ route('admin.documents.index') }}"><i class="bi bi-folder2-open"></i> เอกสารดาวน์โหลด</a>
+                <a href="{{ route('admin.contact.edit') }}"><i class="bi bi-telephone"></i> ช่องทางการติดต่อ</a>
                 <a href="{{ route('admin.seo.edit') }}"><i class="bi bi-search-heart"></i> ตั้งค่า SEO</a>
                 <div class="admin-nav-section is-open">
                     <span><i class="bi bi-building"></i>เกี่ยวกับหน่วยงาน</span>

@@ -6,8 +6,8 @@
             <div class="col-md-6 col-xl-3 footer-contact">
                 <strong>ช่องทางการติดต่อ</strong>
                 <address>
-                    <a href="tel:+6674287900"><i class="bi bi-telephone-fill" aria-hidden="true"></i><span>0 7428 7900</span></a>
-                    <a href="mailto:fms@psu.ac.th"><i class="bi bi-envelope-fill" aria-hidden="true"></i><span>fms@psu.ac.th</span></a>
+                    <a href="tel:{{ $contactSetting->phone_uri }}"><i class="bi bi-telephone-fill" aria-hidden="true"></i><span>{{ $contactSetting->phone }}</span></a>
+                    <a href="mailto:{{ $contactSetting->email }}"><i class="bi bi-envelope-fill" aria-hidden="true"></i><span>{{ $contactSetting->email }}</span></a>
                     <a href="{{ route('contact') }}" wire:navigate><i class="bi bi-geo-alt-fill" aria-hidden="true"></i><span>ที่อยู่และเวลาทำการ</span></a>
                 </address>
             </div>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AboutPageController;
 use App\Http\Controllers\Admin\AboutResponsibilityController;
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\ContactSettingController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NewsItemController;
 use App\Http\Controllers\Admin\PersonnelController;
@@ -23,11 +24,17 @@ Route::get('/news/{newsItem}', [PortalPageController::class, 'showNews'])->name(
 Route::get('/documents', [PortalPageController::class, 'documents'])->name('documents.index');
 Route::get('/about', [PortalPageController::class, 'about'])->name('about');
 Route::get('/contact', [PortalPageController::class, 'contact'])->name('contact');
+Route::get('/auth/authentik/callback', [AdminAuthController::class, 'callback'])
+    ->middleware('guest')
+    ->name('admin.login.callback');
+Route::get('/auth/callback', [AdminAuthController::class, 'callback'])
+    ->middleware('guest')
+    ->name('admin.login.callback.legacy');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/login', [AdminAuthController::class, 'create'])->name('login');
-        Route::post('/login', [AdminAuthController::class, 'store'])->name('login.store');
+        Route::get('/login/authentik', [AdminAuthController::class, 'redirect'])->name('login.redirect');
     });
 
     Route::middleware(['auth', 'admin'])->group(function () {
@@ -39,6 +46,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('documents', PortalDocumentController::class)->except('show');
         Route::get('seo', [SeoSettingController::class, 'edit'])->name('seo.edit');
         Route::put('seo', [SeoSettingController::class, 'update'])->name('seo.update');
+        Route::get('contact', [ContactSettingController::class, 'edit'])->name('contact.edit');
+        Route::put('contact', [ContactSettingController::class, 'update'])->name('contact.update');
         Route::get('about', [AboutPageController::class, 'edit'])->name('about.edit');
         Route::put('about', [AboutPageController::class, 'update'])->name('about.update');
         Route::resource('about/responsibilities', AboutResponsibilityController::class)

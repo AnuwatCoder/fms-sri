@@ -2,12 +2,14 @@
 
 use App\Enums\DocumentCategory;
 use App\Models\AboutResponsibility;
+use App\Models\ContactSetting;
 use App\Models\NewsItem;
 use App\Models\Personnel;
 use App\Models\PortalDocument;
 use App\Models\PortalEvent;
 use App\Models\PortalSystem;
 use App\Models\SeoSetting;
+use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 
 test('the database seeder provides representative portal content without duplicates', function () {
@@ -21,6 +23,8 @@ test('the database seeder provides representative portal content without duplica
         ->and(PortalDocument::query()->whereNotNull('fiscal_year')->count())->toBe(3)
         ->and(PortalDocument::query()->whereNotNull('version')->count())->toBe(7)
         ->and(SeoSetting::query()->count())->toBe(1)
+        ->and(ContactSetting::query()->count())->toBe(1)
+        ->and(ContactSetting::query()->firstOrFail()->email)->toBe('fms@psu.ac.th')
         ->and(PortalDocument::query()->distinct()->pluck('category')->sort()->values()->all())
         ->toBe(collect(DocumentCategory::values())->sort()->values()->all())
         ->and(AboutResponsibility::query()->count())->toBe(4)
@@ -45,5 +49,26 @@ test('the database seeder provides representative portal content without duplica
         ->and(PortalEvent::query()->count())->toBe(4)
         ->and(PortalDocument::query()->count())->toBe(7)
         ->and(SeoSetting::query()->count())->toBe(1)
+        ->and(ContactSetting::query()->count())->toBe(1)
         ->and(Personnel::query()->count())->toBe(4);
+});
+
+test('the database seeder provisions the configured authentik administrator idempotently', function () {
+    config()->set('auth.administrator', [
+        'name' => 'SSO Administrator',
+        'email' => 'Admin.SSO@Example.test',
+    ]);
+
+    $this->seed(DatabaseSeeder::class);
+
+    $administrator = User::query()->where('email', 'admin.sso@example.test')->firstOrFail();
+    $password = $administrator->password;
+
+    expect($administrator->name)->toBe('SSO Administrator')
+        ->and($administrator->is_admin)->toBeTrue();
+
+    $this->seed(DatabaseSeeder::class);
+
+    expect(User::query()->where('email', 'admin.sso@example.test')->count())->toBe(1)
+        ->and($administrator->fresh()->password)->toBe($password);
 });

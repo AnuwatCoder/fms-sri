@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AboutPage;
 use App\Models\AboutResponsibility;
+use App\Models\ContactSetting;
 use App\Models\NewsItem;
 use App\Models\Personnel;
 use Illuminate\Contracts\View\View;
@@ -46,6 +47,8 @@ class PortalPageController extends Controller
 
     public function contact(): View
     {
-        return view('portal.contact');
+        return view('portal.contact', [
+            'contactSetting' => ContactSetting::query()->firstOrFail(),
+        ]);
     }
 }

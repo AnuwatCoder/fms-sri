@@ -7,12 +7,12 @@
                 <div class="row g-4">
                     <div class="col-lg-8 col-xl-7 mx-auto">
                         <div class="contact-panel h-100">
-                            <p class="section-kicker">GET IN TOUCH</p><h2 id="contact-title">ช่องทางติดต่อหน่วยงาน</h2><p class="contact-panel__lead">ติดต่อเราได้ในวันและเวลาราชการ ทีมงานจะดำเนินการประสานงานและตอบกลับโดยเร็วที่สุด</p>
+                            <p class="section-kicker">GET IN TOUCH</p><h2 id="contact-title">{{ $contactSetting->heading }}</h2>@if ($contactSetting->description)<p class="contact-panel__lead">{{ $contactSetting->description }}</p>@endif
                             <address>
-                                <div class="contact-method"><span><i class="bi bi-geo-alt-fill"></i></span><div><strong>ที่อยู่</strong><p>คณะวิทยาการจัดการ มหาวิทยาลัยสงขลานครินทร์<br>15 ถนนกาญจนวนิช ต.คอหงส์ อ.หาดใหญ่ จ.สงขลา 90110</p></div></div>
-                                <div class="contact-method"><span><i class="bi bi-telephone-fill"></i></span><div><strong>โทรศัพท์</strong><p><a href="tel:+6674287900">0 7428 7900</a></p></div></div>
-                                <div class="contact-method"><span><i class="bi bi-envelope-fill"></i></span><div><strong>อีเมล</strong><p><a href="mailto:fms@psu.ac.th">fms@psu.ac.th</a></p></div></div>
-                                <div class="contact-method"><span><i class="bi bi-clock-fill"></i></span><div><strong>เวลาทำการ</strong><p>จันทร์ - ศุกร์ เวลา 08:30 - 16:30 น.<br><small>หยุดวันเสาร์ อาทิตย์ และวันหยุดนักขัตฤกษ์</small></p></div></div>
+                                <div class="contact-method"><span><i class="bi bi-geo-alt-fill"></i></span><div><strong>ที่อยู่</strong><p>{!! nl2br(e($contactSetting->address)) !!}</p></div></div>
+                                <div class="contact-method"><span><i class="bi bi-telephone-fill"></i></span><div><strong>โทรศัพท์</strong><p><a href="tel:{{ $contactSetting->phone_uri }}">{{ $contactSetting->phone }}</a></p></div></div>
+                                <div class="contact-method"><span><i class="bi bi-envelope-fill"></i></span><div><strong>อีเมล</strong><p><a href="mailto:{{ $contactSetting->email }}">{{ $contactSetting->email }}</a></p></div></div>
+                                <div class="contact-method"><span><i class="bi bi-clock-fill"></i></span><div><strong>เวลาทำการ</strong><p>{{ $contactSetting->office_hours }}@if ($contactSetting->office_hours_note)<br><small>{{ $contactSetting->office_hours_note }}</small>@endif</p></div></div>
                             </address>
                         </div>
                     </div>

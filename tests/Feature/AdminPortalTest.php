@@ -2,6 +2,7 @@
 
 use App\Models\AboutPage;
 use App\Models\AboutResponsibility;
+use App\Models\ContactSetting;
 use App\Models\NewsItem;
 use App\Models\Personnel;
 use App\Models\PortalDocument;
@@ -11,6 +12,10 @@ use App\Models\User;
 use Database\Seeders\AboutContentSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Socialite\Contracts\Provider;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\User as SocialiteUser;
+use SocialiteProviders\Authentik\Provider as AuthentikProvider;
 
 function adminUser(): User
 {
@@ -28,17 +33,47 @@ test('non admin users cannot access the administration area', function () {
         ->assertForbidden();
 });
 
-test('only administrators can authenticate through the administration login', function () {
+test('the authentik socialite provider is registered', function () {
+    expect(Socialite::driver('authentik'))->toBeInstanceOf(AuthentikProvider::class);
+});
+
+test('the legacy authentik callback URL remains available', function () {
+    expect(route('admin.login.callback'))->toBe(url('/auth/authentik/callback'))
+        ->and(route('admin.login.callback.legacy'))->toBe(url('/auth/callback'));
+});
+
+test('the administration login redirects to authentik', function () {
+    $provider = Mockery::mock(Provider::class);
+    $provider->shouldReceive('redirect')
+        ->once()
+        ->andReturn(redirect()->away('https://psusso.example.test/application/o/authorize/'));
+    Socialite::shouldReceive('driver')
+        ->once()
+        ->with('authentik')
+        ->andReturn($provider);
+
+    $this->get(route('admin.login.redirect'))
+        ->assertRedirect('https://psusso.example.test/application/o/authorize/');
+});
+
+test('an administrator can authenticate through authentik', function () {
     $admin = User::factory()->create([
         'is_admin' => true,
-        'password' => 'secret-password',
     ]);
+    $authentikUser = (new SocialiteUser)->map([
+        'id' => 'authentik-user-id',
+        'name' => $admin->name,
+        'email' => strtoupper($admin->email),
+    ]);
+    $provider = Mockery::mock(Provider::class);
+    $provider->shouldReceive('user')->once()->andReturn($authentikUser);
+    Socialite::shouldReceive('driver')
+        ->once()
+        ->with('authentik')
+        ->andReturn($provider);
 
-    $this->post(route('admin.login.store'), [
-        'email' => $admin->email,
-        'password' => 'secret-password',
-        'remember' => '1',
-    ])->assertRedirect(route('admin.dashboard'));
+    $this->get(route('admin.login.callback'))
+        ->assertRedirect(route('admin.dashboard'));
 
     $this->assertAuthenticatedAs($admin);
 
@@ -46,16 +81,44 @@ test('only administrators can authenticate through the administration login', fu
         ->assertRedirect(route('admin.login'));
 
     $this->assertGuest();
+});
 
+test('authentik users without administrator access are rejected', function () {
     $user = User::factory()->create([
         'is_admin' => false,
-        'password' => 'secret-password',
     ]);
-
-    $this->post(route('admin.login.store'), [
+    $authentikUser = (new SocialiteUser)->map([
+        'id' => 'non-admin-authentik-user-id',
+        'name' => $user->name,
         'email' => $user->email,
-        'password' => 'secret-password',
-    ])->assertSessionHasErrors('email');
+    ]);
+    $provider = Mockery::mock(Provider::class);
+    $provider->shouldReceive('user')->once()->andReturn($authentikUser);
+    Socialite::shouldReceive('driver')
+        ->once()
+        ->with('authentik')
+        ->andReturn($provider);
+
+    $this->get(route('admin.login.callback'))
+        ->assertRedirect(route('admin.login'))
+        ->assertSessionHasErrors('authentik');
+
+    $this->assertGuest();
+});
+
+test('an authentik callback failure returns to the login screen', function () {
+    $provider = Mockery::mock(Provider::class);
+    $provider->shouldReceive('user')
+        ->once()
+        ->andThrow(new RuntimeException('OAuth callback failed'));
+    Socialite::shouldReceive('driver')
+        ->once()
+        ->with('authentik')
+        ->andReturn($provider);
+
+    $this->get(route('admin.login.callback'))
+        ->assertRedirect(route('admin.login'))
+        ->assertSessionHasErrors('authentik');
 
     $this->assertGuest();
 });
@@ -63,7 +126,10 @@ test('only administrators can authenticate through the administration login', fu
 test('the login and all administration screens render successfully', function () {
     $this->get(route('admin.login'))
         ->assertOk()
-        ->assertSee('เข้าสู่ระบบหลังบ้าน');
+        ->assertSee('เข้าสู่ระบบหลังบ้าน')
+        ->assertSee('เข้าสู่ระบบด้วย PSU SSO')
+        ->assertSee(route('admin.login.redirect'), false)
+        ->assertDontSee('type="password"', false);
 
     $admin = adminUser();
     $system = PortalSystem::query()->firstOrFail();
@@ -87,6 +153,7 @@ test('the login and all administration screens render successfully', function ()
         route('admin.documents.index') => 'เอกสารดาวน์โหลด',
         route('admin.documents.create') => 'เพิ่มเอกสาร',
         route('admin.documents.edit', $document) => 'แก้ไขเอกสาร',
+        route('admin.contact.edit') => 'ช่องทางการติดต่อหน่วยงาน',
         route('admin.seo.edit') => 'ตั้งค่า SEO',
         route('admin.about.edit') => 'เกี่ยวกับหน่วยงาน',
         route('admin.about.responsibilities.index') => 'ภารกิจหลักของหน่วยงาน',
@@ -100,6 +167,60 @@ test('the login and all administration screens render successfully', function ()
     foreach ($pages as $url => $heading) {
         $this->actingAs($admin)->get($url)->assertOk()->assertSee($heading);
     }
+});
+
+test('only administrators can manage contact settings', function () {
+    $this->get(route('admin.contact.edit'))
+        ->assertRedirect(route('admin.login'));
+
+    $this->actingAs(User::factory()->create(['is_admin' => false]))
+        ->get(route('admin.contact.edit'))
+        ->assertForbidden();
+});
+
+test('an administrator can update the contact channels shown on the portal', function () {
+    $payload = [
+        'heading' => 'ติดต่อทีมงานของเรา',
+        'description' => 'พร้อมให้บริการและประสานงานในวันทำการ',
+        'address' => "อาคารบริหาร ชั้น 2\nมหาวิทยาลัยสงขลานครินทร์",
+        'phone' => '0 7428 7999',
+        'email' => 'contact@example.test',
+        'office_hours' => 'จันทร์ - ศุกร์ เวลา 09:00 - 16:00 น.',
+        'office_hours_note' => 'หยุดวันหยุดนักขัตฤกษ์',
+    ];
+
+    $this->actingAs(adminUser())
+        ->put(route('admin.contact.update'), $payload)
+        ->assertRedirect(route('admin.contact.edit'))
+        ->assertSessionHas('success');
+
+    $this->assertDatabaseHas('contact_settings', $payload);
+
+    $this->get(route('contact'))
+        ->assertOk()
+        ->assertSee('ติดต่อทีมงานของเรา')
+        ->assertSee('อาคารบริหาร ชั้น 2<br />', false)
+        ->assertSee('href="tel:+6674287999"', false)
+        ->assertSee('href="mailto:contact@example.test"', false)
+        ->assertSee('หยุดวันหยุดนักขัตฤกษ์');
+});
+
+test('contact settings require valid contact details', function () {
+    $contactSetting = ContactSetting::query()->firstOrFail();
+
+    $this->actingAs(adminUser())
+        ->put(route('admin.contact.update'), [
+            'heading' => '',
+            'description' => $contactSetting->description,
+            'address' => '',
+            'phone' => 'หมายเลขไม่ถูกต้อง',
+            'email' => 'invalid-email',
+            'office_hours' => '',
+            'office_hours_note' => $contactSetting->office_hours_note,
+        ])
+        ->assertSessionHasErrors(['heading', 'address', 'phone', 'email', 'office_hours']);
+
+    expect($contactSetting->fresh()->phone)->toBe('0 7428 7900');
 });
 
 test('an administrator can create update and delete a portal system', function () {

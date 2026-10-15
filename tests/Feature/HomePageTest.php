@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\NewsItem;
+use App\Models\PortalDocument;
+use App\Models\PortalEvent;
 
 test('the portal home page renders its main sections', function () {
     $response = $this->get(route('home'));
@@ -12,7 +14,8 @@ test('the portal home page renders its main sections', function () {
         ->assertSee('ระบบแผนยุทธศาสตร์')
         ->assertSee('ข่าวสารและประกาศ')
         ->assertSee('ปฏิทินกิจกรรม')
-        ->assertSee('เอกสาร/ดาวน์โหลด');
+        ->assertSee('เอกสาร/ดาวน์โหลด')
+        ->assertDontSee('profile-card', false);
 });
 
 test('the home route is named', function () {
@@ -26,6 +29,17 @@ test('the home page identifies when no news is available', function () {
         ->assertOk()
         ->assertSee('ยังไม่มีข่าวสารและประกาศในขณะนี้')
         ->assertSee('role="status"', false);
+});
+
+test('the home page identifies when no events or documents are available', function () {
+    PortalEvent::query()->delete();
+    PortalDocument::query()->delete();
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('ยังไม่มีกิจกรรมในขณะนี้')
+        ->assertSee('ยังไม่มีเอกสารในขณะนี้')
+        ->assertSee('sidebar-empty-state', false);
 });
 
 test('the portal layout includes the page loading progress bar', function () {

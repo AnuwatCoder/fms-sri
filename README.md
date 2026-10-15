@@ -34,7 +34,7 @@ php artisan migrate --seed
 npm run build
 ```
 
-Set `ADMIN_EMAIL`, `ADMIN_NAME`, and `ADMIN_PASSWORD` in `.env` before seeding when an administrator account should be created outside the testing environment.
+Set `ADMIN_EMAIL`, `ADMIN_NAME`, `AUTHENTIK_CLIENT_ID`, and `AUTHENTIK_CLIENT_SECRET` in `.env` before seeding. The Authentik application redirect URI must be `{APP_URL}/auth/authentik/callback`. Only an Authentik account whose email matches a local user with `is_admin = true` can access the administration area.
 
 To refresh only the example portal systems, news, events, and documents, run:
 

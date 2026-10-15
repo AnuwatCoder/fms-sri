@@ -20,6 +20,11 @@ return [
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
+    'administrator' => [
+        'name' => env('ADMIN_NAME', 'Portal Administrator'),
+        'email' => env('ADMIN_EMAIL'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
